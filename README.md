@@ -4,11 +4,12 @@
 <div align='center'>
 <img src='https://img.shields.io/github/languages/code-size/givensuman/reactmart' alt='code size' /> 
 &nbsp;
-<img src='https://img.shields.io/badge/-Open%20Source-ff69b4' alt='open source' />
 &nbsp;
 <img src='https://img.shields.io/badge/build-passing-success' alt='passing' />
 </div>
 <br />
+
+_Warning_: You probably don't need this library. If you're looking for third-party React hooks, check out the [zustand](https://www.npmjs.com/package/zustand) library first!
 
 reactmart is a simple global state management solution built using React hooks. It's meant to imitate the design of Vuex of the Vue ecosystem, keeping your state in a plain-old-javascript-object (POJO).
 
@@ -36,9 +37,8 @@ import Children from './Children'
 
 export const App = () => 
     <StoreProvider value={{
-        name: 'lemon',
-        taste: 'sour',
-        type: 'citrus'
+        foo: "bar",
+        biz: "baz"
     }}>
         <Children />
     </StoreProvider>
@@ -50,17 +50,33 @@ import React from ' react'
 import useStore from 'reactmart'
 
 export const Child = () => {
-    const { name } = useStore()
+    const { foo } = useStore()
 
     return (
         <>
-        <h1>{name.state}</h1> // Displays 'lemon'
-        <button 
-        onClick={() => name.set('lime')} // Updates 'lemon' to 'lime'
-        >Click me</button>
+            {/* Displays "bar" */}
+            <h1>{foo.state}</h1>
+
+            {/* Updates foo to "buz" */}
+            <button 
+                onClick={() => foo.set('buz')}
+            >
+                Click me
+            </button>
         </>
     )
 }
 ```
-Try it out and see how it fits your project! 
+It can also be useful to seperate the store and provide its type throughout your app:
+```js
+// store.ts
+import useStore from "reactmart"
+
+export const store = {
+    foo: "bar",
+    biz: "baz"
+}
+
+export const useTypedStore = () => useStore<typeof store>()
+```
 <br />
