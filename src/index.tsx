@@ -4,7 +4,7 @@ import React, {
 } from 'react';
 
 const StoreContext = createContext(null)
-const useStore = () => useContext(StoreContext)
+const useStore = <T,>() => useContext<T>(StoreContext)
 
 interface Props {
   children?: ReactNode,
