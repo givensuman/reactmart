@@ -1,44 +1,49 @@
-import React, {
-  FC, ReactNode,
-  createContext, useContext, useReducer, 
-} from 'react';
+import React, { createContext, useContext, useState } from 'react'
+import type { FC, ReactNode, Dispatch } from 'react'
 
 const StoreContext = createContext(null)
-const useStore = <T,>() => useContext<T>(StoreContext)
+
+export default function useStore<T extends object = {
+  [key: string]: any
+}>() {
+  return useContext<Store<T>>(StoreContext)
+}
+
+export type Store<T extends object> = {
+  [Property in keyof T]: {
+    readonly state: T[Property],
+    set: Dispatch<React.SetStateAction<T[Property]>>
+  }
+}
 
 interface Props {
   children?: ReactNode,
   value: object
 }
 
-const StoreProvider: FC<Props> = ({ children, value }) => {
+export const StoreProvider: FC<Props> = ({ 
+  children, 
+  value,
+  ...other
+}) => {
   
-  const reducer = (state, action) => {
-    return {
-      ...state,
-      [action.type]: {
-        ...state[action.type],
-        state: action.payload
-      }
-    }
-  }
+  const store = Object.entries(value).reduce(
+    (state, [key, value]) => {
 
-  const state = Object.entries(value).reduce(
-    (state, [key, value]) => ({
+      const storedKey = useState(value)
+
+      return {
       ...state,
       [key]: {
-        state: value,
-        set: (setter) => dispatch({ type: key, payload: setter })
+        state: storedKey[0],
+        set: storedKey[1]
       }
-    }), {})
-
-  const [store, dispatch] = useReducer(reducer, state)
+    }
+    }, {})
 
   return (
-    <StoreContext.Provider value={store}>
+    <StoreContext.Provider value={store} {...other}>
       {children}
     </StoreContext.Provider>
   )
 }
-
-export { StoreProvider, useStore as default }

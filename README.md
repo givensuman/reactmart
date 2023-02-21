@@ -9,16 +9,17 @@
 </div>
 <br />
 
-_Warning_: You probably don't need this library. If you're looking for third-party React hooks, check out the [zustand](https://www.npmjs.com/package/zustand) library first!
+_Warning_: You probably don't need this library. If you're looking for third-party React state-management, check out the [zustand](https://www.npmjs.com/package/zustand) library first!
 
 reactmart is a simple global state management solution built using React hooks. It's meant to imitate the design of Vuex of the Vue ecosystem, keeping your state in a plain-old-javascript-object (POJO).
 
-This package ships with only two exports:
+This package ships with only three exports:
 
 |name	|export |description   	|
 |---	|---	|---	|
 |useStore   	|default   	|Custom hook that returns store object   	|
-|StoreProvider  |named   	|Context wrapper component   	|
+|StoreProvider  |named   	|Context provider component   	|
+|Store   |type   |  Type used internally to convert store into a stateful store type
 
 Each key/value in your store is returned by `useStore` with a `state` value and `set` method attached.
 
@@ -67,7 +68,28 @@ export const Child = () => {
     )
 }
 ```
-It can also be useful to seperate the store and provide its type throughout your app:
+By its nature, `useStore` doesn't know what's in your store. You can explicitly define your store's shape with TypeScript generics:
+```js
+const store = useStore<{
+    foo: string,
+    bar: string
+}>()
+
+/*
+typeof store == {
+    foo: {
+        readonly state: string,
+        set: React.Dispatch<React.SetStateAction<string>>
+    },
+    bar: {
+        readonly state: string,
+        set: React.Dispatch<React.SetStateAction<string>>
+    }
+}
+*/
+```
+
+It's recommended to seperate the store and provide its type throughout your app:
 ```js
 // store.ts
 import useStore from "reactmart"
@@ -78,5 +100,17 @@ export const store = {
 }
 
 export const useTypedStore = () => useStore<typeof store>()
+```
+Or manually get the shape of the store to do whatever you want with it:
+```js
+// store.ts
+import type { Store } from "reactmart"
+
+export const store = {
+    foo: "bar",
+    biz: "baz"
+}
+
+export type StoreType = Store<typeof store>
 ```
 <br />
