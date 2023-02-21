@@ -3,7 +3,7 @@ import type { FC, ReactNode, Dispatch } from 'react'
 
 const StoreContext = createContext(null)
 
-export default function useStore<T extends object = {
+export function useStore<T extends object = {
   [key: string]: any
 }>() {
   return useContext<Store<T>>(StoreContext)
@@ -47,3 +47,5 @@ export const StoreProvider: FC<Props> = ({
     </StoreContext.Provider>
   )
 }
+
+export default useStore
