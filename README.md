@@ -76,7 +76,7 @@ const store = useStore<{
 }>()
 
 /*
-typeof store == {
+typeof store === {
     foo: {
         readonly state: string,
         set: React.Dispatch<React.SetStateAction<string>>
